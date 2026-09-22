@@ -8,7 +8,7 @@ function Game:new()
     Scene.new(self)
     self.counter, self.counterText = 0, UI.TextDisplay("0","m6x11",96,G.bounceArea.w/2,75,{0,0,0})
     self.balls = {}
-    for i = 1, 100, 1 do
+    for i = 1, 10, 1 do
         table.insert(self.balls,Ball(100 + 600 * math.random(),100 + 600 * math.random()))
     end
 end
@@ -26,8 +26,6 @@ end
 
 function Game:draw()
     self:setBG({1,1,1,1})
-    love.graphics.setColor({0,0,0,0.2})
-    love.graphics.rectangle("fill",800,0,300,800)
     for key, value in pairs(self.balls) do
         value:draw()
     end
