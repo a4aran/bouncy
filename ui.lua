@@ -118,10 +118,12 @@ function TextDisplay:useStillPos(yn,left,top)
     end
 end
 
-function TextDisplay:draw()
+function TextDisplay:draw(offsetX,offsetY)
+    offsetX = offsetX or 0
+    offsetY = offsetY or 0
     love.graphics.setFont(self.font)
     love.graphics.setColor(self.color)
-    love.graphics.print(self.text,self.pos.x,self.pos.y)
+    love.graphics.print(self.text,self.pos.x + offsetX,self.pos.y + offsetY)
 end
 
 function TextDisplay:setText(newText)
@@ -133,9 +135,150 @@ function TextDisplay:setText(newText)
     end
 end
 
--- todo text display with outline
+local TextBlock = Object:extend()
+
+function TextBlock:new(text, font, size, centerX, centerY, color, wrapLimit, align)
+    self.color = color or {0, 0, 0, 1}
+    self.font = FontCache.getFont(font, size)
+    self.wrapLimit = wrapLimit or 9999
+    self.align = align or "left"
+    self.stillPos = false
+    self.c = {x = centerX, y = centerY}
+    self:setText(text)
+end
+
+function TextBlock:_normalise(text)
+    if type(text) == "table" then
+        return table.concat(text, "\n")
+    end
+    return text
+end
+
+function TextBlock:useStillPos(yn, left, top)
+    self.stillPos = yn
+    if self.stillPos then
+        if left and top then
+            self.pos.x = left
+            self.pos.y = top
+        end
+    end
+end
+
+function TextBlock:draw(offsetX, offsetY)
+    offsetX = offsetX or 0
+    offsetY = offsetY or 0
+    love.graphics.setFont(self.font)
+    love.graphics.setColor(self.color)
+    love.graphics.printf(self.text, self.pos.x + offsetX, self.pos.y + offsetY, self.wrapLimit, self.align)
+end
+
+function TextBlock:setText(newText)
+    local normalised = self:_normalise(newText)
+    if self.text ~= normalised then
+        self.text = normalised
+        if not self.stillPos then
+            local _, lines = self.font:getWrap(self.text, self.wrapLimit)
+            local totalHeight = #lines * self.font:getHeight() * self.font:getLineHeight()
+            local actualWidth = math.min(self.wrapLimit, self.font:getWidth(self.text))
+            self.pos = {
+                x = self.c.x - (actualWidth / 2),
+                y = self.c.y - (totalHeight / 2)
+            }
+        end
+    end
+end
+
+local OutlinedTextDisplay = Object:extend()
+
+function OutlinedTextDisplay:new(text, font, size, centerX, centerY, color, outlineSize, outlineColor)
+    self.text = text or ""
+    self.color = color or {1, 1, 1, 1}
+    self.outlineColor = outlineColor or {0, 0, 0, 1}
+    self.outlineSize = outlineSize or 2
+
+    self.font = FontCache.getFont(font, size)
+
+    self.c = {x = centerX or 0, y = centerY or 0}
+    self.pos = {
+        x = self.c.x - (self.font:getWidth(self.text) / 2),
+        y = self.c.y - (self.font:getHeight(self.text) / 2)
+    }
+
+    self.stillPos = false
+end
+
+function OutlinedTextDisplay:useStillPos(yn, left, top)
+    self.stillPos = yn
+
+    if self.stillPos and left and top then
+        self.pos.x = left
+        self.pos.y = top
+    elseif not self.stillPos then
+        -- revert back to centered mode
+        self.pos.x = self.c.x - (self.font:getWidth(self.text) / 2)
+        self.pos.y = self.c.y - (self.font:getHeight(self.text) / 2)
+    end
+end
+
+function OutlinedTextDisplay:setText(newText)
+    if self.text ~= newText then
+        self.text = newText
+
+        if not self.stillPos then
+            self.pos.x = self.c.x - (self.font:getWidth(self.text) / 2)
+            self.pos.y = self.c.y - (self.font:getHeight(self.text) / 2)
+        end
+    end
+end
+
+function OutlinedTextDisplay:setCenter(x, y)
+    self.c.x = x
+    self.c.y = y
+
+    if not self.stillPos then
+        self.pos.x = self.c.x - (self.font:getWidth(self.text) / 2)
+        self.pos.y = self.c.y - (self.font:getHeight(self.text) / 2)
+    end
+end
+
+function OutlinedTextDisplay:setOutline(color, size)
+    if color then self.outlineColor = color end
+    if size then self.outlineSize = size end
+end
+
+function OutlinedTextDisplay:draw(offsetX, offsetY)
+    offsetX = offsetX or 0
+    offsetY = offsetY or 0
+
+    love.graphics.setFont(self.font)
+
+    local x = self.pos.x + offsetX
+    local y = self.pos.y + offsetY + self.outlineSize
+    local o = self.outlineSize
+
+    -- outline
+    love.graphics.setColor(self.outlineColor)
+
+    for dx = -o, o do
+        for dy = -o, o do
+            if dx ~= 0 or dy ~= 0 then
+                love.graphics.print(self.text, x + dx, y + dy)
+            end
+        end
+    end
+
+    -- main text
+    love.graphics.setColor(self.color)
+    love.graphics.print(self.text, x, y)
+end
+
+function OutlinedTextDisplay:setColor(color)
+    self.color = color
+end
+
 
 local Bar = Object:extend()
+
 function Bar:new(width,height,posX,posY,fillSide,color,borderColor,borderSize,fillBG)
     self.side = fillSide -- ... 1-4 clockwise by 90deg from 0 (up,right,down,left)
     self.c = color
@@ -188,7 +331,15 @@ local function hexColor(str)
     local r = tonumber(str:sub(1,2), 16)
     local g = tonumber(str:sub(3,4), 16)
     local b = tonumber(str:sub(5,6), 16)
-    return {r/255, g/255, b/255}
+    return {r/255, g/255, b/255,1}
 end
 
-return {Button = Button,ImageButton = ImageButton,TextDisplay = TextDisplay,Bar = Bar,hexColor = hexColor}
+return {
+    Button = Button,
+    ImageButton = ImageButton,
+    TextDisplay = TextDisplay,
+    Bar = Bar,
+    hexColor = hexColor,
+    TextBlock = TextBlock,
+    OutlinedTextDisplay = OutlinedTextDisplay
+}

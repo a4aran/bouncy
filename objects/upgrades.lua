@@ -1,15 +1,17 @@
+local UpgradeData = require("objects.upgradeData")
+
 local Object = require("classic")
 
-local UpgradeBar = Object:expand()
-local UpgradeBar:new()
-    self.size = {w = 300, h = 800}
-    self.upgrades = {}
-    self.scrollAmount = 0
+local UpgradeBase = Object:extend()
+function UpgradeBase:new(upgradeType)
+    self.type = upgradeType
+    self.title = UpgradeData[upgradeType].title
+    self.description = UpgradeData[upgradeType].desc
 end
 
-local UpgradeBar:update(dt) end
-
-local UpgradeBar:draw()
-    love.graphics.setColor({0,0,0,0.2})
-    love.graphics.rectangle("fill",800,0,self.size.w,self.size.h)
+function UpgradeBase:draw(y)
+    love.graphics.setColor({0,0,0,1})
+    love.graphics.rectangle("fill",5,y+5,250,90)
 end
+
+return UpgradeBase

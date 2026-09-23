@@ -2,15 +2,17 @@ local Scene = require("scenes.scene")
 local G = require("globals")
 local UI = require("ui")
 local Ball = require("objects.ball")
+local Upgrades = require("objects.upgradeBar")
 
 local Game = Scene:extend()
 function Game:new()
     Scene.new(self)
-    self.counter, self.counterText = 0, UI.TextDisplay("0","m6x11",96,G.bounceArea.w/2,75,{0,0,0})
+    self.counter, self.counterText = 0, UI.OutlinedTextDisplay("0","m6x11",96,G.bounceArea.w/2,75,{1,1,1},3,{0,0,0})
     self.balls = {}
-    for i = 1, 10, 1 do
+    for i = 1, 1, 1 do
         table.insert(self.balls,Ball(100 + 600 * math.random(),100 + 600 * math.random()))
     end
+    self.upgardeBar = Upgrades.UpgradeBar()
 end
 
 function Game:update(dt)
@@ -30,6 +32,7 @@ function Game:draw()
         value:draw()
     end
     self.counterText:draw()
+    self.upgardeBar:draw()
 end
 
 function Game:increasePullStrength()
