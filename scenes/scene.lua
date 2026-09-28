@@ -10,6 +10,7 @@ function Scene:update(dt) end
 function Scene:draw() end
 function Scene:keypressed(k) end
 function Scene:mousepressed(x, y, button) end
+function Scene:scrollwheelmoved(x, y) end
 
 function Scene:requestSceneChange(sceneTochange)
     self.switchScene = sceneTochange

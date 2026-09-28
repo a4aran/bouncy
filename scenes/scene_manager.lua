@@ -29,6 +29,11 @@ end
 function SceneManager:keypressed(k)
     self.scenes[self.currentSceneName]:keypressed(k)
 end
+
+function SceneManager:scrollwheelmoved(x,y)
+    self.scenes[self.currentSceneName]:scrollwheelmoved(x,y)
+end
+
 function SceneManager:mousepressed(x, y, button)
     self.scenes[self.currentSceneName]:mousepressed(x, y, button)
 end

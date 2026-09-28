@@ -73,3 +73,11 @@ function love.draw()
     love.graphics.setColor({0,0,0})
     love.graphics.rectangle("fill",800,0,300,800)
 end
+
+function love.mousepressed(x,y,button)
+    sm:mousepressed(x, y, button)
+end
+
+function love.wheelmoved(x,y)
+    sm:scrollwheelmoved(x,y)
+end

@@ -31,3 +31,9 @@ function Game:onHit()
     self.counter = self.counter + 1
     Self.counterText:set(self.counter)
 end
+
+function Game:scrollwheelmoved(x,y)
+    if y > 0 then 
+        
+    end
+end
