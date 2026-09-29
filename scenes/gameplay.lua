@@ -1,10 +1,18 @@
 local Scene = require("scenes.scene")
 local G = require("globals")
+local UI = require("ui")
+local Ball = require("objects.ball")
+local Upgrades = require("objects.upgradeBar")
 
 local Game = Scene:extend()
 function Game:new()
     Scene.new(self)
-    self.counter, self.counterText = 0, love.graphics.newText(G.font.px50,"0")
+    self.counter, self.counterText = 0, UI.OutlinedTextDisplay("0","m6x11",96,G.bounceArea.w/2,75,{1,1,1},3,{0,0,0})
+    self.balls = {}
+    for i = 1, 1, 1 do
+        table.insert(self.balls,Ball(100 + 600 * math.random(),100 + 600 * math.random()))
+    end
+    self.upgardeBar = Upgrades.UpgradeBar()
 end
 
 function Game:update(dt)
@@ -12,10 +20,19 @@ function Game:update(dt)
     mx = math.min(mx, 800)
     G.mousePosForPull.x = mx
     G.mousePosForPull.y = my
+    for key, value in pairs(self.balls) do
+        value:update(dt)
+        if value.hit then self:onHit(value) end
+    end
 end
 
 function Game:draw()
     self:setBG({1,1,1,1})
+    for key, value in pairs(self.balls) do
+        value:draw()
+    end
+    self.counterText:draw()
+    self.upgardeBar:draw()
 end
 
 function Game:increasePullStrength()
@@ -26,14 +43,19 @@ function Game:increasePullStrength()
     end 
 end
 
-function Game:onHit()
-    ball.color = {math.random(),math.random(),math.random()}
+function Game:onHit(ball)
     self.counter = self.counter + 1
-    Self.counterText:set(self.counter)
+    self.counterText:setText(self.counter)
+    ball.hit = false
 end
 
 function Game:scrollwheelmoved(x,y)
     if y > 0 then 
-        
+        print("up: " .. y)
+    end
+    if y < 0 then 
+        print("down: " .. y)
     end
 end
+
+return Game
