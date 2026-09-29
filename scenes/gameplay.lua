@@ -24,6 +24,7 @@ function Game:update(dt)
         value:update(dt)
         if value.hit then self:onHit(value) end
     end
+    self.upgardeBar:update(dt)
 end
 
 function Game:draw()
@@ -56,6 +57,7 @@ function Game:scrollwheelmoved(x,y)
     if y < 0 then 
         print("down: " .. y)
     end
+    self.upgardeBar:changeScroll(y)
 end
 
 return Game

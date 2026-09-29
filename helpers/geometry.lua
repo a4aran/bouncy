@@ -6,5 +6,4 @@ function geo.circlesOverlap(a, b)
     return dx*dx + dy*dy < (a.r + b.r)^2
 end
 
-
 return geo
