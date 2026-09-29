@@ -51,13 +51,11 @@ function Game:onHit(ball)
 end
 
 function Game:scrollwheelmoved(x,y)
-    if y > 0 then 
-        print("up: " .. y)
-    end
-    if y < 0 then 
-        print("down: " .. y)
-    end
     self.upgardeBar:changeScroll(y)
+end
+
+function Game:mousepressed(x,y,btn)
+    self.upgardeBar:mousepressed(x,y,btn)
 end
 
 return Game

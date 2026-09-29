@@ -26,10 +26,16 @@ function UpgradeBar:changeScroll(value)
     local visibleHeight = self.scrollCanvas:getHeight()
     local maxScroll = math.max(contentHeight - visibleHeight, 0)
 
+    local scroll = value * 12
+
     self.scrollAmount = math.max(
-        math.min(self.scrollAmount + value * 12, 0),
+        math.min(self.scrollAmount + scroll, 0),
         -maxScroll
     )
+
+    for k, u in ipairs(self.upgrades) do
+        u:scroll(self.scrollAmount)
+    end
 end
 
 
@@ -49,6 +55,17 @@ function UpgradeBar:draw()
     love.graphics.setColor({1,1,1,1})
     love.graphics.draw(self.scrollCanvas,820,100)
     self.title:draw()
+end
+
+function UpgradeBar:mousepressed(x,y,btn)
+    if btn == 1 then 
+        for k, u  in ipairs(self.upgrades) do
+            if u.hovered and u.clickedTimer:completionPercentage() == 1 then
+                u.onClick("click!")
+                u.clickedTimer:restart()
+            end
+        end
+    end
 end
 
 return {UpgradeBar = UpgradeBar}
