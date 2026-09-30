@@ -47,6 +47,7 @@ end
 function Game:onHit(ball)
     self.counter = self.counter + 1
     self.counterText:setText(self.counter)
+    self.upgardeBar:counterChange()
     ball.hit = false
 end
 

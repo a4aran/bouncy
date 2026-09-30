@@ -1,6 +1,7 @@
 local Object = require("classic")
 local UI = require("ui")
 local upgrades = require("objects.upgrades")
+local UpgradeData = require("upgradeData")
 local Vec2 = require("helpers.vec2")
 
 local UpgradeBar = Object:extend()
@@ -8,8 +9,24 @@ function UpgradeBar:new()
     self.size = {w = 300, h = 800}
     self.title = UI.TextDisplay("UPGRADES","m6x11",64,950,64,{0,0,0})
     self.upgrades = {}
-    for i = 0, 10, 1 do
-        table.insert(self.upgrades,upgrades("no" .. i+1,Vec2(826,105 + 100*i)))
+    local y = 105
+    for i = 1, #UpgradeData.UpgradeOrder, 1 do
+        local key = UpgradeData.UpgradeOrder[i]
+        table.insert(self.upgrades,upgrades(key,Vec2(826,y)))
+        y = y + 100
+    end
+    for i, upgrade in ipairs(self.upgrades) do
+        if UpgradeData.Upgrades[upgrade.type].condition then
+            local conditions = UpgradeData.Upgrades[upgrade.type].condition
+            if conditions.special then
+                if G.upgradesBought.Specials[conditions.special] > 0 then
+                    upgrade.locked = false
+                else 
+                    upgrade.locked = true
+                end
+                print(upgrade.type,upgrade.locked)
+            end
+        end
     end
     self.scrollAmount = 0
     self.scrollCanvas = love.graphics.newCanvas(252,675)
@@ -19,6 +36,10 @@ function UpgradeBar:update(dt)
     for k, button in ipairs(self.upgrades) do
         button:update(dt)
     end
+end
+
+function UpgradeBar:counterChange()
+    
 end
 
 function UpgradeBar:changeScroll(value)
