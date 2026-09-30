@@ -7,20 +7,22 @@ local Upgrades = {
         title = "Ball Speed", 
         desc = "Speed at which balls move",
         max= 15, 
+        globalVar = "speed",
         calc = function (amount)
-            return 80 + amount * 10
+            return 100 + amount * 10
         end,
         price = function (amount)
-            return 10 + 3 * amount
+            return 5 + 3 * amount
         end
     },
     MousePullStrength = {
         title = "Mouse Pull Strength",
         desc = "Increases the pull stregth of the mouse.",
         price = function (amount)
-            return 20 * 1.2^amount + amount
+            return 15 * 1.2^amount + amount
         end,
         max= 20,
+        globalVar = "mousePullStrength",
         calc = function (amount)
             return 0.1 + 0.044 * amount
         end,
@@ -34,7 +36,7 @@ local Upgrades = {
             return 1 + amount
         end,
         price = function (amount)
-            return 40 + amount^1.3 * 10
+            return 30 + amount^1.3 * 10
         end
     }
 }

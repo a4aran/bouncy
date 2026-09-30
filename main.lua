@@ -3,6 +3,7 @@ local SceneManager = require("scenes.scene_manager")
 local Game = require("scenes.gameplay")
 local Menu = require("scenes.menu")
 local vec2 = require("helpers.vec2")
+local UpgradeData = require("upgradeData")
 
 local ball = {x=200,y=300,r=30,xMult=1,yMult=1,color = {1,0,0}}
 math.randomseed(os.time())
@@ -13,6 +14,7 @@ function love.load()
     sm = SceneManager()
     sm:addScene(Menu(),"menu")
     sm:addScene(Game(),"gameplay")
+    G.speed = UpgradeData.Upgrades.BallSpeed.calc(0)
 end
 
 function love.update(dt)

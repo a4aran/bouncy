@@ -76,6 +76,9 @@ function UpgradeBar:draw()
     love.graphics.setColor({1,1,1,1})
     love.graphics.draw(self.scrollCanvas,820,100)
     self.title:draw()
+    for i, upgrade in ipairs(self.upgrades) do
+        upgrade:hoverDraw(800)
+    end
 end
 
 function UpgradeBar:mousepressed(x,y,btn)

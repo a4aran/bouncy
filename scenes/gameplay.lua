@@ -7,7 +7,7 @@ local Upgrades = require("objects.upgradeBar")
 local Game = Scene:extend()
 function Game:new()
     Scene.new(self)
-    self.counter, self.counterText = 0, UI.OutlinedTextDisplay("0","m6x11",96,G.bounceArea.w/2,75,{1,1,1},3,{0,0,0})
+    self.counterText = UI.OutlinedTextDisplay("0","m6x11",96,G.bounceArea.w/2,75,{1,1,1},3,{0,0,0})
     self.balls = {}
     for i = 1, 1, 1 do
         table.insert(self.balls,Ball(100 + 600 * math.random(),100 + 600 * math.random()))
@@ -36,17 +36,17 @@ function Game:draw()
     self.upgardeBar:draw()
 end
 
-function Game:increasePullStrength()
-    if self.counter >= G.cost.pullStrength then
-        self.counter = self.counter - G.cost.pullStrength
-        G.pullStrength = G.pullStrength + 0.05
-        G.cost.pullStrength = math.ceil(G.cost.pullStrength * 1.3)
-    end 
-end
+-- function Game:increasePullStrength()
+--     if self.counter >= G.cost.pullStrength then
+--         self.counter = self.counter - G.cost.pullStrength
+--         G.pullStrength = G.pullStrength + 0.05
+--         G.cost.pullStrength = math.ceil(G.cost.pullStrength * 1.3)
+--     end 
+-- end
 
 function Game:onHit(ball)
-    self.counter = self.counter + 1
-    self.counterText:setText(self.counter)
+    G.counter = G.counter + 1
+    self.counterText:setText(G.counter)
     self.upgardeBar:counterChange()
     ball.hit = false
 end

@@ -1,5 +1,5 @@
 G = {
-    speed = 80,
+    speed = 100,
     pullStrength = 0.1,
     ballRadius = 30,
     mousePosForPull = {x=0,y=0},
@@ -7,8 +7,9 @@ G = {
     mousePos = {0,0},
     upgradesBought = {
         Specials = {MousePull = 0},
-        Upgrades = {}
-    }
+        Upgrades = {BallSpeed = 0,MousePullStrength = 0}
+    },
+    counter = 0
 }
 
 return G
